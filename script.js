@@ -22,6 +22,9 @@ const monsterName = document.querySelector("#monsterName");
 const monsterHealthText = document.querySelector("#monsterHealth");
 
 
+/**
+ * Array de armas
+ */
 const weapons = [
     {
     name:"stick",
@@ -40,6 +43,33 @@ const weapons = [
     }
 ];
 
+/**
+ * Array de monstruos
+ * 
+ */
+const monsters = [
+    {
+      name: "slime",
+      level: 2,
+      health: 15,
+    },
+  
+    {
+      name: "fanged beast",
+      level: 8,
+      health: 60,
+    },
+  
+    {
+      name: "dragon",
+      level: 20,
+      health: 300,
+    }
+  ]
+
+/**
+ * arrya de ubicaciones
+ */
 /** al crear un array de locataions que contenga objetos con los nombres de cada locations y propiedas con cada valor
  * estamos ahorrando codigo */ 
 const locations = [{
@@ -62,7 +92,13 @@ const locations = [{
         text: "You enter the cave. You see some monsters."
       
     },
-]; // En un array se puede almacenar cualquier tipo de dato hasta objetos, un objecto vacio se declara con {}
+    {
+        name: "fight",
+        "button text": ["Attack", "Dodge", "Run"],
+        "button functions": [attack, dodge, goTown],
+        text: "You are fighting a monster."
+      }
+]; // En un array se puede almacenar cualquier tipo de dato, hasta objetos, un objecto vacio se declara con {}
 
 //inicializar botones
 
@@ -95,9 +131,6 @@ function goCave() {
     update(locations[2]);
 }
 
-function fightDragon() {
-  console.log("Fighting dragon.");
-}
 
 function buyHealth(){
     if (gold >= 10) {
@@ -134,9 +167,56 @@ function buyWeapon(){
     }
 }
 
-function fightSlime(){
+function sellWeapon(){
+    if (inventory.length > 1){
+        gold += 15;
+        goldText.innerText = gold;
+        let currentWeapon;
+        currentWeapon = inventory.shift();
+        text.innerText = "You sold a " +currentWeapon+".";
+        text.innerText += " In your inventory you have: " + inventory;
+    }else {
+        text.innerText = "Don't sell your only weapon!";
+    }
+}
 
+function fightSlime(){
+    fighting = 0 ;
+    goFight();
 }
 
 function fightBeast(){
+    fighting = 1;
+}
+
+
+function fightDragon() {
+    fighting = 2;
+  }
+  
+
+function goFight() {
+    update(locations[3]);
+    monsterHealth = monsters[fighting].health;
+    monsterStats.style.display = "block";
+    monsterName.innerText = monsters[fighting].name;
+    monsterHealthText.innerText = monsterHealth;
+  }
+
+function attack(){
+    text.innerText = "The "+ monsters[fighting].name +" attacks."
+    text.innerText += " You attack it with your "+ weapons[currentWeapon].name +".";
+    health -=  monsters[fighting].level;
+    monsterHealth -= weapons[currentWeapon].power +  Math.floor(Math.random() * xp ) + 1; 
+    healthText.innerText = health ;
+    monsterHealthText.innerText=monsterHealth;
+    if(health <= 0){
+        lose();
+      }else if(monsterHealth <= 0){
+        defeatMonster();
+      }
+}
+
+function dodge(){
+  
 }
